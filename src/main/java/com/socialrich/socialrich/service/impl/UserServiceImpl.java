@@ -25,7 +25,10 @@ public class UserServiceImpl implements UserService {
     @Override
     public User getUserById(Long userId) {
         Optional<User> optionalUser = userRepository.findById(userId);
-        return optionalUser.get();
+            if (optionalUser.isPresent()){
+                return optionalUser.get();
+            }
+        return null;
     }
 
     @Override
@@ -35,12 +38,16 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User updateUser(User user) {
-        User existingUser = userRepository.findById(user.getId()).get();
-        existingUser.setName(user.getName());
-        existingUser.setSurname(user.getSurname());
-        existingUser.setRedSocialFavorita(user.getRedSocialFavorita());
-        User updatedUser = userRepository.save(existingUser);
-        return updatedUser;
+        Optional<User> optionalUser = userRepository.findById(user.getId());
+            if (optionalUser.isPresent()){
+                User existingUser = optionalUser.get();
+                existingUser.setName(user.getName());
+                existingUser.setSurname(user.getSurname());
+                existingUser.setRedSocialFavorita(user.getRedSocialFavorita());
+                return userRepository.save(existingUser);
+
+            }
+        return null;
     }
 
     @Override

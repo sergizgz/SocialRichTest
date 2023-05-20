@@ -1,7 +1,6 @@
 package com.socialrich.socialrich.service.impl;
 
 import com.socialrich.socialrich.entity.RedesSociales;
-import com.socialrich.socialrich.entity.User;
 import com.socialrich.socialrich.repository.RedesSocialesRepository;
 import com.socialrich.socialrich.service.RedesSocialesService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,21 +23,35 @@ public class RedesSocialesServiceImpl implements RedesSocialesService {
     @Override
     public RedesSociales getRedesSocialesById(Long redesSocialesId) {
         Optional<RedesSociales> optionalRedesSociales = redesSocialesRepository.findById(redesSocialesId);
-        return optionalRedesSociales.get();
+
+        if (optionalRedesSociales.isPresent()){
+            return optionalRedesSociales.get();
+        }else{
+            return null;
+        }
+
+
     }
 
     @Override
     public List<RedesSociales> getAllRedesSociales() {
-        return null;
+        return redesSocialesRepository.findAll();
     }
 
     @Override
     public RedesSociales updateRedesSociales(RedesSociales redesSociales) {
+        Optional<RedesSociales> optionalRedesSociales = redesSocialesRepository.findById(redesSociales.getId());
+            if (optionalRedesSociales.isPresent()) {
+                RedesSociales existingRedSocial = optionalRedesSociales.get();
+                existingRedSocial.setName(redesSociales.getName());
+                existingRedSocial.setUrl(redesSociales.getUrl());
+                return redesSocialesRepository.save(existingRedSocial);
+            }
         return null;
     }
 
     @Override
     public void deleteRedesSociales(Long redesSocialesId) {
-
+        redesSocialesRepository.deleteById(redesSocialesId);
     }
 }

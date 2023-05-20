@@ -82,7 +82,7 @@ public class UserController {
         RedesSociales redesSociales = redesSocialesService.getRedesSocialesById(redesSocialesId);
 
         //compruebo cuantas redes sociales tiene
-        if (user.getRedesSociales().size() == 0)
+        if (user.getRedesSociales().isEmpty())
         {
             user.setRedSocialFavorita(redesSociales);
         }
