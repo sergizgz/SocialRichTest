@@ -23,12 +23,14 @@ public class UserController {
     @Autowired
     private RedesSocialesService redesSocialesService;
 
+    private static final String NO_USER_STRING = "No user with this ID on database";
+    private static final String NO_USERS = "No users on database";
 
     @GetMapping("/")
     public ResponseEntity<List<User>> getAllUsers() {
         List<User> users = userService.getAllUsers();
         if (users.isEmpty()) {
-            log.warn("no users on database");
+            log.warn(NO_USERS);
             return ResponseEntity.noContent().build();
         }
 
@@ -38,7 +40,7 @@ public class UserController {
     public ResponseEntity<User> getUserById(@PathVariable Long userId) {
         User user = userService.getUserById(userId);
         if (user == null) {
-            log.warn("no user with this ID on database");
+            log.warn(NO_USER_STRING);
             return ResponseEntity.notFound().build();
         }
         //no devolvemos las redes sociales,para eso esta el metodo /{userId}/networks
@@ -49,7 +51,7 @@ public class UserController {
     public ResponseEntity<User> getUserAndNetworksById(@PathVariable Long userId) {
         User user = userService.getUserById(userId);
         if (user == null) {
-            log.warn("no user with this ID on database");
+            log.warn(NO_USER_STRING);
             return ResponseEntity.notFound().build();
         }
         return ResponseEntity.ok(user);
@@ -68,7 +70,7 @@ public class UserController {
         user.setId(userId);
         User updatedUser = userService.updateUser(user);
         if (updatedUser == null) {
-            log.warn("no user with this ID on database");
+            log.warn(NO_USER_STRING);
             return ResponseEntity.notFound().build();
         }
         return ResponseEntity.ok(updatedUser);
@@ -92,7 +94,7 @@ public class UserController {
 
         User updatedUser = userService.updateUser(user);
         if (updatedUser == null) {
-            log.warn("no user with this ID on database");
+            log.warn(NO_USER_STRING);
             return ResponseEntity.notFound().build();
         }
         return ResponseEntity.ok(updatedUser);
@@ -107,7 +109,7 @@ public class UserController {
 
         User updatedUser = userService.updateUser(user);
         if (updatedUser == null) {
-            log.warn("no user with this ID on database");
+            log.warn(NO_USER_STRING);
             return ResponseEntity.notFound().build();
         }
         return ResponseEntity.ok(updatedUser);
