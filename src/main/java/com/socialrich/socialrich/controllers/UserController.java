@@ -1,7 +1,9 @@
 package com.socialrich.socialrich.controllers;
 
+import com.socialrich.socialrich.constants.Constants;
 import com.socialrich.socialrich.entity.RedesSociales;
 import com.socialrich.socialrich.entity.User;
+import com.socialrich.socialrich.exceptions.NoUserException;
 import com.socialrich.socialrich.service.RedesSocialesService;
 import com.socialrich.socialrich.service.UserService;
 import lombok.extern.slf4j.Slf4j;
@@ -23,36 +25,35 @@ public class UserController {
     @Autowired
     private RedesSocialesService redesSocialesService;
 
-    private static final String NO_USER_STRING = "No user with this ID on database";
-    private static final String NO_USERS = "No users on database";
+
 
     @GetMapping("/")
-    public ResponseEntity<List<User>> getAllUsers() {
+    public ResponseEntity<List<User>> getAllUsers() throws NoUserException {
         List<User> users = userService.getAllUsers();
         if (users.isEmpty()) {
-            log.warn(NO_USERS);
-            return ResponseEntity.noContent().build();
+            log.warn(Constants.NO_USERS);
+            throw new NoUserException(Constants.NO_USERS);
         }
 
         return ResponseEntity.ok(users);
     }
     @GetMapping("/{userId}")
-    public ResponseEntity<User> getUserById(@PathVariable Long userId) {
+    public ResponseEntity<User> getUserById(@PathVariable Long userId) throws NoUserException {
         User user = userService.getUserById(userId);
         if (user == null) {
-            log.warn(NO_USER_STRING);
-            return ResponseEntity.notFound().build();
+            log.warn(Constants.NO_USER_STRING);
+            throw new NoUserException(Constants.NO_USER_STRING);
         }
         //no devolvemos las redes sociales,para eso esta el metodo /{userId}/networks
         user.setRedesSociales(null);
         return ResponseEntity.ok(user);
     }
     @GetMapping("/{userId}/networks")
-    public ResponseEntity<User> getUserAndNetworksById(@PathVariable Long userId) {
+    public ResponseEntity<User> getUserAndNetworksById(@PathVariable Long userId) throws NoUserException {
         User user = userService.getUserById(userId);
         if (user == null) {
-            log.warn(NO_USER_STRING);
-            return ResponseEntity.notFound().build();
+            log.warn(Constants.NO_USER_STRING);
+            throw new NoUserException(Constants.NO_USER_STRING);
         }
         return ResponseEntity.ok(user);
     }
@@ -66,18 +67,18 @@ public class UserController {
     }
 
     @PutMapping("/{userId}")
-    public ResponseEntity<User> updateUser(@PathVariable Long userId, @RequestBody User user) {
+    public ResponseEntity<User> updateUser(@PathVariable Long userId, @RequestBody User user) throws NoUserException {
         user.setId(userId);
         User updatedUser = userService.updateUser(user);
         if (updatedUser == null) {
-            log.warn(NO_USER_STRING);
-            return ResponseEntity.notFound().build();
+            log.warn(Constants.NO_USER_STRING);
+            throw new NoUserException(Constants.NO_USER_STRING);
         }
         return ResponseEntity.ok(updatedUser);
     }
 
     @PutMapping("/{userId}/{redesSocialesId}")
-    public ResponseEntity<User> updateRedSocialUser(@PathVariable Long userId, @PathVariable Long redesSocialesId) {
+    public ResponseEntity<User> updateRedSocialUser(@PathVariable Long userId, @PathVariable Long redesSocialesId) throws NoUserException {
         User user = userService.getUserById(userId);
         RedesSociales redesSociales = redesSocialesService.getRedesSocialesById(redesSocialesId);
 
@@ -94,14 +95,14 @@ public class UserController {
 
         User updatedUser = userService.updateUser(user);
         if (updatedUser == null) {
-            log.warn(NO_USER_STRING);
-            return ResponseEntity.notFound().build();
+            log.warn(Constants.NO_USER_STRING);
+            throw new NoUserException(Constants.NO_USER_STRING);
         }
         return ResponseEntity.ok(updatedUser);
     }
 
     @PutMapping("/{userId}/fav/{redesSocialesId}")
-    public ResponseEntity<User> updateFavoriteRedSocialUser(@PathVariable Long userId, @PathVariable Long redesSocialesId) {
+    public ResponseEntity<User> updateFavoriteRedSocialUser(@PathVariable Long userId, @PathVariable Long redesSocialesId) throws NoUserException {
         User user = userService.getUserById(userId);
         RedesSociales redesSociales = redesSocialesService.getRedesSocialesById(redesSocialesId);
 
@@ -109,8 +110,8 @@ public class UserController {
 
         User updatedUser = userService.updateUser(user);
         if (updatedUser == null) {
-            log.warn(NO_USER_STRING);
-            return ResponseEntity.notFound().build();
+            log.warn(Constants.NO_USER_STRING);
+            throw new NoUserException(Constants.NO_USER_STRING);
         }
         return ResponseEntity.ok(updatedUser);
     }

@@ -2,6 +2,7 @@ package com.socialrich.socialrich;
 
 import com.socialrich.socialrich.controllers.UserController;
 import com.socialrich.socialrich.entity.User;
+import com.socialrich.socialrich.exceptions.NoUserException;
 import com.socialrich.socialrich.service.UserService;
 import org.junit.Assert;
 import org.junit.Test;
@@ -28,7 +29,7 @@ public class UserControllerTest {
     private UserController userController;
 
     @Test
-    public void testGetUserById() {
+    public void testGetUserById() throws NoUserException {
         Long userId = 1L;
         User user = new User();
         user.setId(userId);
@@ -43,7 +44,7 @@ public class UserControllerTest {
     }
 
     @Test
-    public void testGetUserByIdNotFound() {
+    public void testGetUserByIdNotFound() throws NoUserException {
         Long userId = 1L;
 
         Mockito.when(userService.getUserById(userId)).thenReturn(null);
@@ -55,7 +56,7 @@ public class UserControllerTest {
     }
 
     @Test
-    public void testGetAllUsers() {
+    public void testGetAllUsers() throws NoUserException {
         List<User> users = new ArrayList<>();
         User user1 = new User();
         user1.setId(1L);
@@ -75,7 +76,7 @@ public class UserControllerTest {
     }
 
     @Test
-    public void testGetAllUsersNoContent() {
+    public void testGetAllUsersNoContent() throws NoUserException {
         List<User> users = new ArrayList<>();
 
         Mockito.when(userService.getAllUsers()).thenReturn(users);
@@ -101,7 +102,7 @@ public class UserControllerTest {
     }
 
     @Test
-    public void testUpdateUser() {
+    public void testUpdateUser() throws NoUserException {
         Long userId = 1L;
         User user = new User();
         user.setId(userId);
@@ -116,7 +117,7 @@ public class UserControllerTest {
     }
 
     @Test
-    public void testUpdateUserNotFound() {
+    public void testUpdateUserNotFound() throws NoUserException {
         Long userId = 1L;
         User user = new User();
         user.setId(userId);
