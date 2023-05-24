@@ -1,8 +1,8 @@
 package com.socialrich.socialrich.controllers;
 
 import com.socialrich.socialrich.constants.Constants;
-import com.socialrich.socialrich.entity.RedesSociales;
-import com.socialrich.socialrich.entity.User;
+import com.socialrich.socialrich.dto.RedesSocialesDTO;
+import com.socialrich.socialrich.dto.UserDTO;
 import com.socialrich.socialrich.exceptions.NoUserException;
 import com.socialrich.socialrich.service.RedesSocialesService;
 import com.socialrich.socialrich.service.UserService;
@@ -28,48 +28,49 @@ public class UserController {
 
 
     @GetMapping("/")
-    public ResponseEntity<List<User>> getAllUsers() throws NoUserException {
-        List<User> users = userService.getAllUsers();
-        if (users.isEmpty()) {
+    public ResponseEntity<List<UserDTO>> getAllUsers() throws NoUserException {
+        List<UserDTO> usersDTO = userService.getAllUsers();
+        if (usersDTO.isEmpty()) {
             log.warn(Constants.NO_USERS);
             throw new NoUserException(Constants.NO_USERS);
         }
 
-        return ResponseEntity.ok(users);
+        return ResponseEntity.ok(usersDTO);
     }
     @GetMapping("/{userId}")
-    public ResponseEntity<User> getUserById(@PathVariable Long userId) throws NoUserException {
-        User user = userService.getUserById(userId);
-        if (user == null) {
+    public ResponseEntity<UserDTO> getUserById(@PathVariable Long userId) throws NoUserException {
+        UserDTO userDTO = userService.getUserById(userId);
+        if (userDTO == null) {
             log.warn(Constants.NO_USER_STRING);
             throw new NoUserException(Constants.NO_USER_STRING);
         }
         //no devolvemos las redes sociales,para eso esta el metodo /{userId}/networks
-        user.setRedesSociales(null);
-        return ResponseEntity.ok(user);
+        userDTO.setRedesSociales(null);
+        return ResponseEntity.ok(userDTO);
     }
     @GetMapping("/{userId}/networks")
-    public ResponseEntity<User> getUserAndNetworksById(@PathVariable Long userId) throws NoUserException {
-        User user = userService.getUserById(userId);
-        if (user == null) {
+    public ResponseEntity<UserDTO> getUserAndNetworksById(@PathVariable Long userId) throws NoUserException {
+        UserDTO userDTO = userService.getUserById(userId);
+        if (userDTO == null) {
             log.warn(Constants.NO_USER_STRING);
             throw new NoUserException(Constants.NO_USER_STRING);
         }
-        return ResponseEntity.ok(user);
+        return ResponseEntity.ok(userDTO);
     }
 
 
 
     @PostMapping("/")
-    public ResponseEntity<User> createUser(@RequestBody User user) {
-        User savedUser = userService.createUser(user);
+    public ResponseEntity<UserDTO> createUser(@RequestBody UserDTO userDTO) {
+
+        UserDTO savedUser = userService.createUser(userDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(savedUser);
     }
 
     @PutMapping("/{userId}")
-    public ResponseEntity<User> updateUser(@PathVariable Long userId, @RequestBody User user) throws NoUserException {
-        user.setId(userId);
-        User updatedUser = userService.updateUser(user);
+    public ResponseEntity<UserDTO> updateUser(@PathVariable Long userId, @RequestBody UserDTO userDTO) throws NoUserException {
+
+        UserDTO updatedUser = userService.updateUser(userDTO,userId);
         if (updatedUser == null) {
             log.warn(Constants.NO_USER_STRING);
             throw new NoUserException(Constants.NO_USER_STRING);
@@ -78,22 +79,22 @@ public class UserController {
     }
 
     @PutMapping("/{userId}/{redesSocialesId}")
-    public ResponseEntity<User> updateRedSocialUser(@PathVariable Long userId, @PathVariable Long redesSocialesId) throws NoUserException {
-        User user = userService.getUserById(userId);
-        RedesSociales redesSociales = redesSocialesService.getRedesSocialesById(redesSocialesId);
+    public ResponseEntity<UserDTO> updateRedSocialUser(@PathVariable Long userId, @PathVariable Long redesSocialesId) throws NoUserException {
+        UserDTO userDTO = userService.getUserById(userId);
+        RedesSocialesDTO redesSocialesDTO = redesSocialesService.getRedesSocialesById(redesSocialesId);
 
         //compruebo cuantas redes sociales tiene
-        if (user.getRedesSociales().isEmpty())
+        if (userDTO.getRedesSociales().isEmpty())
         {
-            user.setRedSocialFavorita(redesSociales);
+            userDTO.setRedSocialFavorita(redesSocialesService.convertDTOtoEntity(redesSocialesDTO));
         }
 
-        List <RedesSociales> redes = user.getRedesSociales();
-        redes.add(redesSociales);
+        List <RedesSocialesDTO> redes = redesSocialesService.convertListEntitytoListDTO(userDTO.getRedesSociales());
+        redes.add(redesSocialesDTO);
 
-        user.setRedesSociales(redes);
+        userDTO.setRedesSociales(redesSocialesService.convertListDTOtoListEntity(redes));
 
-        User updatedUser = userService.updateUser(user);
+        UserDTO updatedUser = userService.updateUser(userDTO, userId);
         if (updatedUser == null) {
             log.warn(Constants.NO_USER_STRING);
             throw new NoUserException(Constants.NO_USER_STRING);
@@ -102,13 +103,13 @@ public class UserController {
     }
 
     @PutMapping("/{userId}/fav/{redesSocialesId}")
-    public ResponseEntity<User> updateFavoriteRedSocialUser(@PathVariable Long userId, @PathVariable Long redesSocialesId) throws NoUserException {
-        User user = userService.getUserById(userId);
-        RedesSociales redesSociales = redesSocialesService.getRedesSocialesById(redesSocialesId);
+    public ResponseEntity<UserDTO> updateFavoriteRedSocialUser(@PathVariable Long userId, @PathVariable Long redesSocialesId) throws NoUserException {
+        UserDTO userDTO = userService.getUserById(userId);
+        RedesSocialesDTO redesSocialesDTO = redesSocialesService.getRedesSocialesById(redesSocialesId);
 
-        user.setRedSocialFavorita(redesSociales);
+        userDTO.setRedSocialFavorita(redesSocialesService.convertDTOtoEntity(redesSocialesDTO));
 
-        User updatedUser = userService.updateUser(user);
+        UserDTO updatedUser = userService.updateUser(userDTO, userId);
         if (updatedUser == null) {
             log.warn(Constants.NO_USER_STRING);
             throw new NoUserException(Constants.NO_USER_STRING);

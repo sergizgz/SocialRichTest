@@ -3,10 +3,12 @@ package com.socialrich.socialrich.entity;
 
 import jakarta.persistence.*;
 
+import java.io.Serializable;
+
 
 @Entity
 @Table(name = "redes_sociales")
-public class RedesSociales {
+public class RedesSociales implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

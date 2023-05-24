@@ -1,17 +1,24 @@
 package com.socialrich.socialrich.service;
 
+import com.socialrich.socialrich.dto.UserDTO;
 import com.socialrich.socialrich.entity.User;
 
 import java.util.List;
 
 public interface UserService {
-    User createUser(User user);
+    UserDTO createUser(UserDTO userDTO);
 
-    User getUserById(Long userId);
+    UserDTO getUserById(Long userId);
 
-    List<User> getAllUsers();
+    List<UserDTO> getAllUsers();
 
-    User updateUser(User user);
+    UserDTO updateUser(UserDTO userDTO, Long userId);
 
     void deleteUser(Long userId);
+
+    UserDTO convertEntitytoDTO(User user);
+
+    User convertDTOtoEntity(UserDTO userDTO);
+
+    List<UserDTO> convertListEntitytoListDTO (List<User> userList);
 }

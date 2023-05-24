@@ -13,8 +13,7 @@ public class ControllerAdvice {
 
     @ExceptionHandler(NoUserException.class)
     public ResponseEntity<ErrorDTO> noUserExceptionHandler ( NoUserException ex){
-        ErrorDTO errorDTO = ErrorDTO.builder().code(ex.getCodeError()).message(ex.getMessage()).build();
-        System.out.println(errorDTO);
+        ErrorDTO errorDTO = ErrorDTO.builder().code(NoUserException.getCodeError()).message(ex.getMessage()).build();
         return new ResponseEntity<>(errorDTO, HttpStatus.BAD_REQUEST);
     }
 

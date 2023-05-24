@@ -8,4 +8,9 @@ public final class Constants {
 
     //CODIGOS DE ERROR
     public static final String CODE_NO_USER_EXCEPTION = "P-500";
+
+
+    private Constants(){
+        throw new IllegalStateException("Utility class");
+    }
 }

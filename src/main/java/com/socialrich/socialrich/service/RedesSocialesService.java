@@ -1,19 +1,28 @@
 package com.socialrich.socialrich.service;
 
+import com.socialrich.socialrich.dto.RedesSocialesDTO;
 import com.socialrich.socialrich.entity.RedesSociales;
 
 import java.util.List;
 
 public interface RedesSocialesService {
-    RedesSociales createRedesSociales(RedesSociales redesSociales);
+    RedesSocialesDTO createRedesSociales(RedesSocialesDTO redesSocialesDTO);
 
-    RedesSociales getRedesSocialesById(Long redesSocialesId);
+    RedesSocialesDTO getRedesSocialesById(Long redesSocialesId);
 
-    List<RedesSociales> getAllRedesSociales();
+    List<RedesSocialesDTO> getAllRedesSociales();
 
-    RedesSociales updateRedesSociales(RedesSociales redesSociales);
+    RedesSocialesDTO updateRedesSociales(RedesSocialesDTO redesSocialesDTO, Long redesSocialesID);
 
     void deleteRedesSociales(Long redesSocialesId);
+
+    RedesSocialesDTO convertEntitytoDTO(RedesSociales redesSociales);
+
+    RedesSociales convertDTOtoEntity(RedesSocialesDTO redesSocialesDTO);
+
+    List<RedesSocialesDTO> convertListEntitytoListDTO (List<RedesSociales> redesSocialesList);
+
+    List<RedesSociales> convertListDTOtoListEntity (List<RedesSocialesDTO> redesSocialesListDTO);
 }
 
 

@@ -1,13 +1,16 @@
 package com.socialrich.socialrich.service.impl;
 
+import com.socialrich.socialrich.dto.RedesSocialesDTO;
 import com.socialrich.socialrich.entity.RedesSociales;
 import com.socialrich.socialrich.repository.RedesSocialesRepository;
 import com.socialrich.socialrich.service.RedesSocialesService;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class RedesSocialesServiceImpl implements RedesSocialesService {
@@ -15,17 +18,25 @@ public class RedesSocialesServiceImpl implements RedesSocialesService {
 
     @Autowired
     private RedesSocialesRepository redesSocialesRepository;
+
+    @Autowired
+    private ModelMapper modelMapper;
     @Override
-    public RedesSociales createRedesSociales(RedesSociales redesSociales) {
-        return redesSocialesRepository.save(redesSociales);
+    public RedesSocialesDTO createRedesSociales(RedesSocialesDTO redesSocialesDTO) {
+
+        RedesSociales redesSociales = redesSocialesRepository.
+                save(convertDTOtoEntity(redesSocialesDTO));
+
+        return convertEntitytoDTO(redesSociales);
     }
 
     @Override
-    public RedesSociales getRedesSocialesById(Long redesSocialesId) {
+    public RedesSocialesDTO getRedesSocialesById(Long redesSocialesId) {
         Optional<RedesSociales> optionalRedesSociales = redesSocialesRepository.findById(redesSocialesId);
 
         if (optionalRedesSociales.isPresent()){
-            return optionalRedesSociales.get();
+
+            return convertEntitytoDTO(optionalRedesSociales.get());
         }else{
             return null;
         }
@@ -34,24 +45,58 @@ public class RedesSocialesServiceImpl implements RedesSocialesService {
     }
 
     @Override
-    public List<RedesSociales> getAllRedesSociales() {
-        return redesSocialesRepository.findAll();
+    public List<RedesSocialesDTO> getAllRedesSociales() {
+        List<RedesSociales> redesSociales = redesSocialesRepository.findAll();
+
+        return convertListEntitytoListDTO(redesSociales);
     }
 
     @Override
-    public RedesSociales updateRedesSociales(RedesSociales redesSociales) {
+    public RedesSocialesDTO updateRedesSociales(RedesSocialesDTO redesSocialesDTO, Long redesSocialesID) {
+        RedesSociales redesSociales = convertDTOtoEntity(redesSocialesDTO);
+        redesSociales.setId(redesSocialesID);
+
         Optional<RedesSociales> optionalRedesSociales = redesSocialesRepository.findById(redesSociales.getId());
+
             if (optionalRedesSociales.isPresent()) {
                 RedesSociales existingRedSocial = optionalRedesSociales.get();
-                existingRedSocial.setName(redesSociales.getName());
-                existingRedSocial.setUrl(redesSociales.getUrl());
-                return redesSocialesRepository.save(existingRedSocial);
+                existingRedSocial.setName(redesSocialesDTO.getName());
+                existingRedSocial.setUrl(redesSocialesDTO.getUrl());
+                RedesSociales redesSociales2 = redesSocialesRepository.save(existingRedSocial);
+                return convertEntitytoDTO(redesSociales2);
             }
         return null;
     }
 
     @Override
     public void deleteRedesSociales(Long redesSocialesId) {
+
         redesSocialesRepository.deleteById(redesSocialesId);
+    }
+
+    @Override
+    public RedesSocialesDTO convertEntitytoDTO(RedesSociales redesSociales) {
+        return modelMapper.map(redesSociales,RedesSocialesDTO.class);
+    }
+
+    @Override
+    public RedesSociales convertDTOtoEntity(RedesSocialesDTO redesSocialesDTO) {
+        return modelMapper.map(redesSocialesDTO,RedesSociales.class);
+    }
+
+    @Override
+    public List<RedesSocialesDTO> convertListEntitytoListDTO(List<RedesSociales> redesSocialesList) {
+        return redesSocialesList
+                .stream()
+                .map(redesSocial -> modelMapper.map(redesSocial, RedesSocialesDTO.class))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<RedesSociales> convertListDTOtoListEntity(List<RedesSocialesDTO> redesSocialesListDTO) {
+        return redesSocialesListDTO
+                .stream()
+                .map(redesSocial -> modelMapper.map(redesSocialesListDTO, RedesSociales.class))
+                .collect(Collectors.toList());
     }
 }
