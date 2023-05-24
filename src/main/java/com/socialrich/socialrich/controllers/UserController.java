@@ -32,7 +32,7 @@ public class UserController {
         List<UserDTO> usersDTO = userService.getAllUsers();
         if (usersDTO.isEmpty()) {
             log.warn(Constants.NO_USERS);
-            throw new NoUserException(Constants.NO_USERS);
+            throw new NoUserException();
         }
 
         return ResponseEntity.ok(usersDTO);
@@ -41,8 +41,8 @@ public class UserController {
     public ResponseEntity<UserDTO> getUserById(@PathVariable Long userId) throws NoUserException {
         UserDTO userDTO = userService.getUserById(userId);
         if (userDTO == null) {
-            log.warn(Constants.NO_USER_STRING);
-            throw new NoUserException(Constants.NO_USER_STRING);
+            log.warn(Constants.NO_USER);
+            throw new NoUserException();
         }
         //no devolvemos las redes sociales,para eso esta el metodo /{userId}/networks
         userDTO.setRedesSociales(null);
@@ -52,8 +52,8 @@ public class UserController {
     public ResponseEntity<UserDTO> getUserAndNetworksById(@PathVariable Long userId) throws NoUserException {
         UserDTO userDTO = userService.getUserById(userId);
         if (userDTO == null) {
-            log.warn(Constants.NO_USER_STRING);
-            throw new NoUserException(Constants.NO_USER_STRING);
+            log.warn(Constants.NO_USER);
+            throw new NoUserException();
         }
         return ResponseEntity.ok(userDTO);
     }
@@ -72,8 +72,8 @@ public class UserController {
 
         UserDTO updatedUser = userService.updateUser(userDTO,userId);
         if (updatedUser == null) {
-            log.warn(Constants.NO_USER_STRING);
-            throw new NoUserException(Constants.NO_USER_STRING);
+            log.warn(Constants.NO_USER);
+            throw new NoUserException();
         }
         return ResponseEntity.ok(updatedUser);
     }
@@ -96,8 +96,8 @@ public class UserController {
 
         UserDTO updatedUser = userService.updateUser(userDTO, userId);
         if (updatedUser == null) {
-            log.warn(Constants.NO_USER_STRING);
-            throw new NoUserException(Constants.NO_USER_STRING);
+            log.warn(Constants.NO_USER);
+            throw new NoUserException();
         }
         return ResponseEntity.ok(updatedUser);
     }
@@ -111,8 +111,8 @@ public class UserController {
 
         UserDTO updatedUser = userService.updateUser(userDTO, userId);
         if (updatedUser == null) {
-            log.warn(Constants.NO_USER_STRING);
-            throw new NoUserException(Constants.NO_USER_STRING);
+            log.warn(Constants.NO_USER);
+            throw new NoUserException();
         }
         return ResponseEntity.ok(updatedUser);
     }
